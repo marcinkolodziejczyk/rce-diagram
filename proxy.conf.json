@@ -1,0 +1,7 @@
+{
+  "/api": {
+    "target": "https://api.raporty.pse.pl",
+    "secure": true,
+    "changeOrigin": true
+  }
+}
