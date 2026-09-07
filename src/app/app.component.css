@@ -1,0 +1,183 @@
+:host {
+  display: block;
+  font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+  color: #1f2430;
+  background: #f5f6fa;
+  min-height: 100vh;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 22px;
+  margin: 0 0 16px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+input[type="date"],
+button {
+  font: inherit;
+  padding: 8px 12px;
+  border: 1px solid #ccd1dc;
+  border-radius: 6px;
+  background: #fff;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:hover {
+  background: #eef1f8;
+}
+
+button.primary {
+  background: #2f6bff;
+  border-color: #2f6bff;
+  color: #fff;
+}
+
+button.primary:hover {
+  background: #2559da;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.switch {
+  display: flex;
+}
+
+.switch button {
+  border-radius: 0;
+}
+
+.switch button:first-child {
+  border-radius: 6px 0 0 6px;
+}
+
+.switch button:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+.switch button + button {
+  border-left: none;
+}
+
+.switch button.active {
+  background: #1f2430;
+  border-color: #1f2430;
+  color: #fff;
+}
+
+.stats {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.stats b {
+  font-size: 16px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e4e7ef;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.grid {
+  stroke: #e9ecf3;
+  stroke-width: 1;
+}
+
+.axis {
+  stroke: #9aa2b5;
+  stroke-width: 1.5;
+}
+
+.axis-label {
+  font-size: 11px;
+  fill: #6b7285;
+}
+
+.line {
+  fill: none;
+  stroke: #2f6bff;
+  stroke-width: 2;
+}
+
+.area {
+  fill: rgba(47, 107, 255, 0.12);
+  stroke: none;
+}
+
+.bar {
+  transition: opacity 0.1s ease;
+}
+
+.bar.dim {
+  opacity: 0.55;
+}
+
+.cursor-line {
+  stroke: #8a93a8;
+  stroke-dasharray: 3 3;
+}
+
+.now-line {
+  stroke: #1f2430;
+  stroke-width: 1.5;
+  stroke-dasharray: 5 3;
+}
+
+.now-marker {
+  fill: #1f2430;
+}
+
+.now-label {
+  fill: #1f2430;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.tooltip {
+  fill: #1f2430;
+  rx: 6;
+}
+
+.tooltip-text {
+  fill: #fff;
+  font-size: 12px;
+}
+
+.msg {
+  padding: 12px 0;
+  font-size: 14px;
+}
+
+.msg.error {
+  color: #c0392b;
+}

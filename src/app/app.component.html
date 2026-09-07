@@ -1,0 +1,93 @@
+<div class="wrap">
+  <h1>Rynkowa cena energii elektrycznej (RCE) — PSE</h1>
+
+  <div class="toolbar">
+    <button type="button" (click)="shiftDay(-1)" title="Poprzedni dzień">&larr;</button>
+    <input type="date" [ngModel]="date()" (ngModelChange)="date.set($event); load()" />
+    <button type="button" (click)="shiftDay(1)" title="Następny dzień">&rarr;</button>
+    <button type="button" class="primary" (click)="load()">Odśwież</button>
+
+    <span class="spacer"></span>
+    <div class="switch">
+      <button type="button" [class.active]="mode() === 'line'" (click)="mode.set('line')">Wykres liniowy</button>
+      <button type="button" [class.active]="mode() === 'bars'" (click)="mode.set('bars')">Słupki 15 min</button>
+      <button type="button" [class.active]="mode() === 'hourly'" (click)="mode.set('hourly')">Słupki godzinowe</button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <p class="msg">Ładowanie danych…</p>
+  } @else if (error()) {
+    <p class="msg error">Błąd: {{ error() }}</p>
+  } @else if (!data().length) {
+    <p class="msg">Brak danych dla wybranego dnia.</p>
+  } @else {
+    @if (stats(); as s) {
+      <div class="stats">
+        <span>Min: <b>{{ s.min | number: '1.2-2' }}</b> PLN/MWh</span>
+        <span>Śr.: <b>{{ s.avg | number: '1.2-2' }}</b> PLN/MWh</span>
+        <span>Max: <b>{{ s.max | number: '1.2-2' }}</b> PLN/MWh</span>
+        <span>Punktów: <b>{{ data().length }}</b></span>
+      </div>
+    }
+
+    <div class="card">
+      <svg
+        #chart
+        [attr.viewBox]="'0 0 ' + W + ' ' + H"
+        (mousemove)="onMove($event, chart)"
+        (mouseleave)="clearHover()"
+      >
+        @for (t of yTicks(); track t.y) {
+          <line class="grid" [attr.x1]="PAD.left" [attr.x2]="W - PAD.right" [attr.y1]="t.y" [attr.y2]="t.y" />
+          <text class="axis-label" [attr.x]="PAD.left - 8" [attr.y]="t.y + 4" text-anchor="end">
+            {{ t.value | number: '1.0-0' }}
+          </text>
+        }
+
+        @for (t of xTicks(); track t.x) {
+          <line class="grid" [attr.x1]="t.x" [attr.x2]="t.x" [attr.y1]="PAD.top" [attr.y2]="H - PAD.bottom" />
+          <text class="axis-label" [attr.x]="t.x" [attr.y]="H - PAD.bottom + 16" text-anchor="middle">
+            {{ t.label }}
+          </text>
+        }
+
+        @if (mode() !== 'line') {
+          @for (b of bars(); track b.point.dtime) {
+            <rect
+              class="bar"
+              [class.dim]="hovered() && hovered()!.point.dtime !== b.point.dtime"
+              [attr.x]="b.barX"
+              [attr.y]="b.barY"
+              [attr.width]="b.width"
+              [attr.height]="b.height"
+              [attr.fill]="b.fill"
+            />
+          }
+        } @else {
+          <path class="area" [attr.d]="areaPath()" />
+          <path class="line" [attr.d]="linePath()" />
+        }
+        <line class="axis" [attr.x1]="PAD.left" [attr.x2]="W - PAD.right" [attr.y1]="zeroY()" [attr.y2]="zeroY()" />
+
+        @if (nowMarker(); as n) {
+          <line class="now-line" [attr.x1]="n.x" [attr.x2]="n.x" [attr.y1]="PAD.top" [attr.y2]="H - PAD.bottom" />
+          <polygon class="now-marker" [attr.points]="n.x - 5 + ',' + (PAD.top - 10) + ' ' + (n.x + 5) + ',' + (PAD.top - 10) + ' ' + n.x + ',' + PAD.top" />
+        }
+
+        @if (hovered(); as h) {
+          <line class="cursor-line" [attr.x1]="h.x" [attr.x2]="h.x" [attr.y1]="PAD.top" [attr.y2]="H - PAD.bottom" />
+          @if (mode() === 'line') {
+            <circle [attr.cx]="h.x" [attr.cy]="h.y" r="4" fill="#2f6bff" stroke="#fff" stroke-width="2" />
+          }
+          <g [attr.transform]="'translate(' + (h.x > W - 180 ? h.x - 170 : h.x + 10) + ',' + PAD.top + ')'">
+            <rect class="tooltip" width="160" height="46" />
+            <text class="tooltip-text" x="10" y="19">{{ h.point.period }}</text>
+            <text class="tooltip-text" x="10" y="36">{{ h.point.rce_pln | number: '1.2-2' }} PLN/MWh</text>
+          </g>
+        }
+
+      </svg>
+    </div>
+  }
+</div>
