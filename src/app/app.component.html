@@ -3,7 +3,7 @@
 
   <div class="toolbar">
     <button type="button" (click)="shiftDay(-1)" title="Poprzedni dzień">&larr;</button>
-    <input type="date" [ngModel]="date()" (ngModelChange)="date.set($event); load()" />
+    <input type="date" [ngModel]="dateForInput()" (ngModelChange)="setDateFromInput($event)" />
     <button type="button" (click)="shiftDay(1)" title="Następny dzień">&rarr;</button>
     <button type="button" class="primary" (click)="load()">Odśwież</button>
 

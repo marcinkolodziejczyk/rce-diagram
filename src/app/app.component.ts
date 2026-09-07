@@ -218,13 +218,28 @@ export class AppComponent {
     return `${d.toLocaleDateString('pl-PL')} ${d.getHours()}:${Math.floor(d.getMinutes() / 15)}`;
   }
 
+  dateForInput(): string {
+    const [day, month, year] = this.date().split('.');
+    return year && month && day ? `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}` : '';
+  }
+
+  setDateFromInput(value: string): void {
+    const [year, month, day] = value.split('-');
+    if (year && month && day) {
+      this.date.set(`${day.padStart(2, '0')}.${month.padStart(2, '0')}.${year}`);
+      this.load();
+    }
+  }
+
   load(): void {
     const d = this.date();
     if (!d) return;
     this.loading.set(true);
     this.error.set(null);
     this.hovered.set(null);
-    this.rce.getForDate(d).subscribe({
+    const [day, month, year] = d.split('.');
+    const apiDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    this.rce.getForDate(apiDate).subscribe({
       next: (items) => {
         this.data.set(items);
         this.loading.set(false);
@@ -238,7 +253,8 @@ export class AppComponent {
   }
 
   shiftDay(days: number): void {
-    const d = new Date(this.date() + 'T00:00:00');
+    const [day, month, year] = this.date().split('.');
+    const d = new Date(Number(year), Number(month) - 1, Number(day));
     d.setDate(d.getDate() + days);
     this.date.set(d.toLocaleDateString('pl-PL'));
     this.load();
