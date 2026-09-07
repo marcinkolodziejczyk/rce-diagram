@@ -191,7 +191,7 @@ export class AppComponent {
   readonly nowMarker = computed(() => {
     const now = this.now();
     const pts = this.points();
-    if (!pts.length || this.date() !== now.toLocaleDateString('sv-SE')) return null;
+    if (!pts.length || this.date() !== now.toLocaleDateString('pl-PL')) return null;
     const minutes = now.getHours() * 60 + now.getMinutes();
     const index = Math.min(pts.length - 1, Math.floor((minutes / 1440) * pts.length));
     return { x: pts[index].x, label: now.toTimeString().slice(0, 5) };
@@ -206,7 +206,7 @@ export class AppComponent {
       const quarter = this.quarterOf(now);
       if (quarter !== lastQuarter) {
         lastQuarter = quarter;
-        if (this.date() === now.toLocaleDateString('sv-SE')) {
+        if (this.date() === now.toLocaleDateString('pl-PL')) {
           this.load();
         }
       }
@@ -215,7 +215,7 @@ export class AppComponent {
   }
 
   private quarterOf(d: Date): string {
-    return `${d.toLocaleDateString('sv-SE')} ${d.getHours()}:${Math.floor(d.getMinutes() / 15)}`;
+    return `${d.toLocaleDateString('pl-PL')} ${d.getHours()}:${Math.floor(d.getMinutes() / 15)}`;
   }
 
   load(): void {
@@ -240,7 +240,7 @@ export class AppComponent {
   shiftDay(days: number): void {
     const d = new Date(this.date() + 'T00:00:00');
     d.setDate(d.getDate() + days);
-    this.date.set(d.toLocaleDateString('sv-SE'));
+    this.date.set(d.toLocaleDateString('pl-PL'));
     this.load();
   }
 
