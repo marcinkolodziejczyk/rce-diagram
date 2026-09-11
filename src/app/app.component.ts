@@ -22,14 +22,16 @@ type ChartMode = 'line' | 'bars' | 'hourly';
 
 type Hsl = [number, number, number];
 
-// skala barw: 0 = niebieski, w górę zielony → żółty → pomarańczowy → czerwony, w dół fiolety
+// skala barw na sztywno: 0 = niebieski, 1.0 (1000 PLN/MWh = 1 PLN/kWh) = czerwony, dalej brąz, 2.0 (2000 PLN/MWh = 2 PLN/kWh) = czarny
 const POSITIVE_STOPS: { t: number; hsl: Hsl }[] = [
   { t: 0, hsl: [220, 85, 55] },
   { t: 0.12, hsl: [165, 65, 45] },
   { t: 0.35, hsl: [110, 60, 45] },
   { t: 0.55, hsl: [55, 85, 50] },
   { t: 0.78, hsl: [28, 90, 52] },
-  { t: 1, hsl: [0, 80, 48] }
+  { t: 1, hsl: [0, 80, 48] },
+  { t: 1.4, hsl: [20, 65, 28] },
+  { t: 2, hsl: [0, 0, 10] }
 ];
 
 const NEGATIVE_STOPS: { t: number; hsl: Hsl }[] = [
@@ -39,7 +41,8 @@ const NEGATIVE_STOPS: { t: number; hsl: Hsl }[] = [
 ];
 
 function colorAt(stops: { t: number; hsl: Hsl }[], t: number): string {
-  const c = Math.min(1, Math.max(0, t));
+  const maxT = stops[stops.length - 1].t;
+  const c = Math.min(maxT, Math.max(0, t));
   let i = stops.length - 1;
   while (i > 0 && stops[i - 1].t > c) i--;
   const a = stops[Math.max(0, i - 1)];
@@ -137,16 +140,13 @@ export class AppComponent {
   readonly bars = computed<Bar[]>(() => {
     const pts = this.points();
     if (this.mode() === 'line' || !pts.length) return [];
-    const s = this.stats()!;
     const slot = (W - PAD.left - PAD.right) / pts.length;
     const width = Math.max(slot * 0.88, 1);
     const zero = this.zeroY();
-    const maxPos = Math.max(s.max, 1);
-    const maxNeg = Math.max(-s.min, 1);
     return pts.map((p) => {
       const v = p.point.rce_pln;
       const fill =
-        v >= 0 ? colorAt(POSITIVE_STOPS, v / maxPos) : colorAt(NEGATIVE_STOPS, -v / maxNeg);
+        v >= 0 ? colorAt(POSITIVE_STOPS, v / 1000) : colorAt(NEGATIVE_STOPS, -v / 500);
       return {
         ...p,
         barX: p.x - width / 2,
