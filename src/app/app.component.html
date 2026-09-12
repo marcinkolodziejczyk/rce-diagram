@@ -7,6 +7,11 @@
     <button type="button" (click)="shiftDay(1)" title="Następny dzień">&rarr;</button>
     <button type="button" class="primary" (click)="load()">Odśwież</button>
 
+    <label class="unit-check">
+      <input type="checkbox" [ngModel]="useMwh()" (ngModelChange)="useMwh.set($event)" />
+      PLN/MWh
+    </label>
+
     <span class="spacer"></span>
     <div class="switch">
       <button type="button" [class.active]="mode() === 'line'" (click)="mode.set('line')">Wykres liniowy</button>
@@ -24,9 +29,9 @@
   } @else {
     @if (stats(); as s) {
       <div class="stats">
-        <span>Min: <b>{{ s.min | number: '1.2-2' }}</b> PLN/MWh</span>
-        <span>Śr.: <b>{{ s.avg | number: '1.2-2' }}</b> PLN/MWh</span>
-        <span>Max: <b>{{ s.max | number: '1.2-2' }}</b> PLN/MWh</span>
+        <span>Min: <b>{{ (useMwh() ? s.min : s.min / 1000) | number: (useMwh() ? '1.2-2' : '1.2-4') }}</b> {{ useMwh() ? 'PLN/MWh' : 'PLN/kWh' }}</span>
+        <span>Śr.: <b>{{ (useMwh() ? s.avg : s.avg / 1000) | number: (useMwh() ? '1.2-2' : '1.2-4') }}</b> {{ useMwh() ? 'PLN/MWh' : 'PLN/kWh' }}</span>
+        <span>Max: <b>{{ (useMwh() ? s.max : s.max / 1000) | number: (useMwh() ? '1.2-2' : '1.2-4') }}</b> {{ useMwh() ? 'PLN/MWh' : 'PLN/kWh' }}</span>
         <span>Punktów: <b>{{ data().length }}</b></span>
       </div>
     }
@@ -41,7 +46,7 @@
         @for (t of yTicks(); track t.y) {
           <line class="grid" [attr.x1]="PAD.left" [attr.x2]="W - PAD.right" [attr.y1]="t.y" [attr.y2]="t.y" />
           <text class="axis-label" [attr.x]="PAD.left - 8" [attr.y]="t.y + 4" text-anchor="end">
-            {{ t.value | number: '1.0-0' }}
+            {{ (useMwh() ? t.value : t.value / 1000) | number: (useMwh() ? '1.0-0' : '1.2-2') }}
           </text>
         }
 
@@ -83,7 +88,7 @@
           <g [attr.transform]="'translate(' + (h.x > W - 180 ? h.x - 170 : h.x + 10) + ',' + PAD.top + ')'">
             <rect class="tooltip" width="160" height="46" />
             <text class="tooltip-text" x="10" y="19">{{ h.point.period }}</text>
-            <text class="tooltip-text" x="10" y="36">{{ h.point.rce_pln | number: '1.2-2' }} PLN/MWh</text>
+            <text class="tooltip-text" x="10" y="36">{{ (useMwh() ? h.point.rce_pln : h.point.rce_pln / 1000) | number: (useMwh() ? '1.2-2' : '1.2-4') }} {{ useMwh() ? 'PLN/MWh' : 'PLN/kWh' }}</text>
           </g>
         }
 

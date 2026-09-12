@@ -73,6 +73,7 @@ export class AppComponent {
 
   readonly date = signal(new Date().toLocaleDateString('pl-PL'));
   readonly mode = signal<ChartMode>('line');
+  readonly useMwh = signal(false);
   readonly now = signal(new Date());
   readonly data = signal<RcePoint[]>([]);
   readonly loading = signal(false);
