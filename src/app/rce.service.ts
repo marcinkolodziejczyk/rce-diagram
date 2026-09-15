@@ -6,7 +6,8 @@ import { RcePoint, RceResponse } from './rce.model';
 @Injectable({ providedIn: 'root' })
 export class RceService {
   private readonly http = inject(HttpClient);
-  private readonly url = '/api/rce-pln';
+  // PSE API allows CORS from any origin, so we can call it directly (no proxy needed)
+  private readonly url = 'https://api.raporty.pse.pl/api/rce-pln';
 
   getForDate(businessDate: string): Observable<RcePoint[]> {
     const params = new HttpParams().set('$filter', `business_date eq '${businessDate}'`);
